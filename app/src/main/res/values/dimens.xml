@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Generic with ratio -->
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_medium_2">16dp</dimen>
+    <dimen name="margin_medium_3">20dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_xlarge">32dp</dimen>
+    <dimen name="margin_xxlarge">48dp</dimen>
+
+    <dimen name="text_small_4x">8sp</dimen>
+    <dimen name="text_small_3x">9sp</dimen>
+    <dimen name="text_smaller">10sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_regular">14sp</dimen>
+    <dimen name="text_regular_1x">15sp</dimen>
+    <dimen name="text_regular_2x">16sp</dimen>
+    <dimen name="text_regular_3x">20sp</dimen>
+    <dimen name="text_heading_1x">24sp</dimen>
+    <dimen name="text_heading_2x">32sp</dimen>
+    <dimen name="text_big">40sp</dimen>
+    <dimen name="text_big_2x">60sp</dimen>
+    <dimen name="text_big_3x">80sp</dimen>
+    <dimen name="text_big_4x">120sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+    <dimen name="screen_title_size">22sp</dimen>
+
+    <dimen name="margin_bottom_home_fab">60dp</dimen>
+    <dimen name="status_bar_height">25dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="detail_backdrop_height">256dp</dimen>
+    <dimen name="bg_dialog_button_radius">4dp</dimen>
+    <dimen name="margin_spinner_label">21dp</dimen>
+    <dimen name="margin_medium_n">-8dp</dimen>
+
+    <!-- App specific dimens-->
+    <dimen name="height_banner">250dp</dimen>
+    <dimen name="width_movie_item">128dp</dimen>
+    <dimen name="height_movie_image">180dp</dimen>
+    <dimen name="margin_card_medium_2">12dp</dimen>
+    <dimen name="height_check_movie_show_time">200dp</dimen>
+    <dimen name="width_showcase">280dp</dimen>
+    <dimen name="height_showcase">180dp</dimen>
+    <dimen name="width_actor">150dp</dimen>
+    <dimen name="height_actor">180dp</dimen>
+    <dimen name="height_collapsing_toolbar_movie_detail">320dp</dimen>
+    <dimen name="width_release_year">72dp</dimen>
+    <dimen name="height_viewpager_banner">250dp</dimen>
+</resources>
