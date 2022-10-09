@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_movie_detail.*
 class MovieDetailActivity : AppCompatActivity() {
 
     companion object {
-
         private const val EXTRA_MOVIE_ID = "EXTRA_MOVIE_ID"
 
         fun newIntent(context: Context, movieId: Int): Intent {
@@ -53,12 +52,11 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private fun requestData(movieId: Int) {
         mMovieModel.getMovieDetail(movieId = movieId.toString(),
-            onSuccess = {
-                bindData(it)
-            },
             onFailure = {
                 showError(it)
-            })
+            })?.observe(this) {
+            it?.let { movieDetails -> bindData(movieDetails) }
+        }
 
         mMovieModel.getCreditsByMovie(
             movieId = movieId.toString(),

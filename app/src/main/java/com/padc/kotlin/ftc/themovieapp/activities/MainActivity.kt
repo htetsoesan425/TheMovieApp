@@ -3,6 +3,7 @@ package com.padc.kotlin.ftc.themovieapp.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +20,7 @@ import com.padc.kotlin.ftc.themovieapp.delegates.ShowCaseViewHolderDelegate
 import com.padc.kotlin.ftc.themovieapp.viewpods.ActorListViewPod
 import com.padc.kotlin.ftc.themovieapp.viewpods.MovieListViewPod
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseViewHolderDelegate,
     MovieViewHolderDelegate {
@@ -57,34 +59,34 @@ class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseView
 
     private fun requestData() {
         //now playing movie
-        mMovieModel.getNowPlayingMovies(
+        /*mMovieModel.getNowPlayingMovies(
             onSuccess = {
                 mBannerAdapter.setNewData(it)
             },
             onFailure = {
                 showError(it)
             }
-        )
+        )*/
+
+        mMovieModel.getNowPlayingMovies {
+            showError(it)
+        }?.observe(this) {
+            mBannerAdapter.setNewData(it)
+        }
 
         //popular movies
-        mMovieModel.getPopularMovies(
-            onSuccess = {
-                mBestPopularMovieListViewPod.setData(it)
-            },
-            onFailure = {
-                showError(it)
-            }
-        )
+        mMovieModel.getPopularMovies {
+            showError(it)
+        }?.observe(this) {
+            mBestPopularMovieListViewPod.setData(it)
+        }
 
         //top rated movies
-        mMovieModel.getTopRatedMovies(
-            onSuccess = {
-                mShowcaseAdapter.setNewData(it)
-            },
-            onFailure = {
-                showError(it)
-            }
-        )
+        mMovieModel.getTopRatedMovies {
+            showError(it)
+        }?.observe(this) {
+            mShowcaseAdapter.setNewData(it)
+        }
 
         //genres
         mMovieModel.getGenres(
@@ -200,6 +202,17 @@ class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseView
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_discover, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Snackbar.make(window.decorView, item.itemId.toString(), Snackbar.LENGTH_SHORT).show()
+        when (item.itemId) {
+            R.id.itemSearch -> {
+                startActivity(MovieSearchActivity.newIntent(this))
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onTapMovieFromBanner(movieId: Int) {
