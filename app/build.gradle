@@ -7,12 +7,12 @@ plugins {
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 33
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.padc.kotlin.ftc.themovieapp"
         minSdk 23
-        targetSdk 33
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -39,7 +39,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -85,5 +85,8 @@ dependencies {
     //RxBinding
     implementation 'com.jakewharton.rxbinding4:rxbinding-core:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-appcompat:4.0.0'
+
+    // View Model
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
 
 }
