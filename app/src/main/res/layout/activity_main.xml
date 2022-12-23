@@ -58,15 +58,15 @@
             </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
-	            android:id="@+id/tvBestPopularFilmsAndSerialsLabel"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@+id/flBanner"
-	            android:layout_marginStart="@dimen/margin_medium_2"
-	            android:layout_marginTop="@dimen/margin_medium_3"
-	            android:text="@string/lbl_best_popular_films_and_series"
-	            android:textColor="#607D8B"
-	            android:textStyle="bold" />
+                android:id="@+id/tvBestPopularFilmsAndSerialsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/flBanner"
+                android:layout_marginStart="@dimen/margin_medium_2"
+                android:layout_marginTop="@dimen/margin_medium_3"
+                android:text="@string/lbl_best_popular_films_and_series"
+                android:textColor="@color/colorSecondaryText"
+                android:textStyle="bold" />
 
             <include
                 android:id="@+id/vpBestPopularMovieList"

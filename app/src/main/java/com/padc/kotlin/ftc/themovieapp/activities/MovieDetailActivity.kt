@@ -5,12 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.padc.kotlin.ftc.themovieapp.R
+import com.padc.kotlin.ftc.themovieapp.data.models.MovieModel
+import com.padc.kotlin.ftc.themovieapp.data.models.MovieModelImpl
 import com.padc.kotlin.ftc.themovieapp.data.vos.GenreVO
 import com.padc.kotlin.ftc.themovieapp.data.vos.MovieVO
-import com.padc.kotlin.ftc.themovieapp.mvvm.MovieDetailsViewModel
 import com.padc.kotlin.ftc.themovieapp.utils.IMAGE_BASE_URL
 import com.padc.kotlin.ftc.themovieapp.viewpods.ActorListViewPod
 import kotlinx.android.synthetic.main.activity_movie_detail.*
@@ -31,13 +32,12 @@ class MovieDetailActivity : AppCompatActivity() {
     lateinit var actorsViewPod: ActorListViewPod
     lateinit var creatorsViewPod: ActorListViewPod
 
-    // view model
-    private lateinit var mViewModel: MovieDetailsViewModel
+    //model
+    private val mMovieModel: MovieModel = MovieModelImpl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
-
         setUpViewPods()
         setUpListener()
 
@@ -46,27 +46,34 @@ class MovieDetailActivity : AppCompatActivity() {
         //Snackbar.make(window.decorView, "movieId: $movieId", Snackbar.LENGTH_SHORT).show()
 
         movieId?.let {
-            setUpViewModel(it)
+            requestData(it)
         }
-
-        observeLiveData()
     }
 
-    private fun observeLiveData() {
-        mViewModel.movieDetailsLiveData?.observe(this) {
-            it?.let { movieVO ->
-                bindData(movieVO)
+    private fun requestData(movieId: Int) {
+        mMovieModel.getMovieDetail(movieId = movieId.toString(),
+            onFailure = {
+                showError(it)
+            })?.observe(this) {
+            it?.let { movieDetails -> bindData(movieDetails) }
+        }
+
+        mMovieModel.getCreditsByMovie(
+            movieId = movieId.toString(),
+            onSuccess = {
+                actorsViewPod.setData(it.first)
+                creatorsViewPod.setData(it.second)
+            },
+            onFailure = {
+                showError("getCreditByMovie: $it")
             }
-        }
 
-        mViewModel.castLiveData.observe(this, actorsViewPod::setData)
-        mViewModel.crewLiveData.observe(this, creatorsViewPod::setData)
+        )
+
     }
 
-    private fun setUpViewModel(movieId: Int) {
-        mViewModel = ViewModelProvider(this)[MovieDetailsViewModel::class.java]
-        mViewModel.getInitialData(movieId = movieId)
-
+    private fun showError(it: String) {
+        Snackbar.make(window.decorView, it, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun bindData(movie: MovieVO) {
