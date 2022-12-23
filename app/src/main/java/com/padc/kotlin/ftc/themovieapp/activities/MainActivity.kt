@@ -5,18 +5,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.padc.kotlin.ftc.themovieapp.R
 import com.padc.kotlin.ftc.themovieapp.adapters.BannerAdapter
 import com.padc.kotlin.ftc.themovieapp.adapters.ShowcaseAdapter
-import com.padc.kotlin.ftc.themovieapp.data.models.MovieModel
-import com.padc.kotlin.ftc.themovieapp.data.models.MovieModelImpl
 import com.padc.kotlin.ftc.themovieapp.data.vos.GenreVO
 import com.padc.kotlin.ftc.themovieapp.delegates.BannerViewHolderDelegate
 import com.padc.kotlin.ftc.themovieapp.delegates.MovieViewHolderDelegate
 import com.padc.kotlin.ftc.themovieapp.delegates.ShowCaseViewHolderDelegate
+import com.padc.kotlin.ftc.themovieapp.mvvm.MainViewModel
 import com.padc.kotlin.ftc.themovieapp.viewpods.ActorListViewPod
 import com.padc.kotlin.ftc.themovieapp.viewpods.MovieListViewPod
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,109 +30,39 @@ class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseView
     lateinit var mMoviesByGenreViewPod: MovieListViewPod
     lateinit var mActorListViewPod: ActorListViewPod
 
-    //model
-    private val mMovieModel: MovieModel = MovieModelImpl
-
-    //data
-    private var mGenres: List<GenreVO>? = null
+    // View Model
+    private lateinit var mViewModel: MainViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setUpViewModel()
+
         setUpActionBar()
         setUpViewPods()
         setUpBannerViewPager()
-        //setUpGenreTabLayout()
         setUpShowCaseRecyclerView()
-
         setUpListeners()
 
-        //MovieDataAgentImpl.getNowPlayingMovie()
-        //OkHttpDataAgentImpl.getNowPlayingMovie()
-        //RetrofitDataAgentImpl.getNowPlayingMovie()
-
-        requestData()
+        observeLiveData()
+        //requestData()
     }
 
-    private fun requestData() {
-        //now playing movie
-        /*mMovieModel.getNowPlayingMovies(
-            onSuccess = {
-                mBannerAdapter.setNewData(it)
-            },
-            onFailure = {
-                showError(it)
-            }
-        )*/
-
-        mMovieModel.getNowPlayingMovies {
-            showError(it)
-        }?.observe(this) {
-            mBannerAdapter.setNewData(it)
-        }
-
-        //popular movies
-        mMovieModel.getPopularMovies {
-            showError(it)
-        }?.observe(this) {
-            mBestPopularMovieListViewPod.setData(it)
-        }
-
-        //top rated movies
-        mMovieModel.getTopRatedMovies {
-            showError(it)
-        }?.observe(this) {
-            mShowcaseAdapter.setNewData(it)
-        }
-
-        //genres
-        mMovieModel.getGenres(
-            onSuccess = {
-                mGenres = it
-
-                setUpGenreTabLayout(it)
-
-                it.firstOrNull()?.id?.let { genreId ->
-                    getMoviesByGenre(genreId)
-                }
-            },
-            onFailure = {
-                showError(it)
-            }
-        )
-
-        //actors
-        mMovieModel.getActors(
-            onSuccess = {
-                Log.d("TAG", "requestData: $it")
-                mActorListViewPod.setData(it)
-            },
-            onFailure = {
-                showError(it)
-            }
-        )
+    private fun setUpViewModel() {
+        mViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mViewModel.getInitialData()
     }
 
-    private fun getMoviesByGenre(genreId: Int) {
+    private fun observeLiveData() {
+        mViewModel.nowPlayingMovieLiveData?.observe(this, mBannerAdapter::setNewData)
+        mViewModel.popularMovieLiveData?.observe(this, mBestPopularMovieListViewPod::setData)
+        mViewModel.topRatedMovieLiveData?.observe(this, mShowcaseAdapter::setNewData)
+        mViewModel.genreLiveData.observe(this, this::setUpGenreTabLayout)
+        mViewModel.moviesByGenreLiveData.observe(this, mMoviesByGenreViewPod::setData)
+        mViewModel.actorsLiveData.observe(this, mActorListViewPod::setData)
 
-        Log.d("TAG", "getMoviesByGenre: genreId:$genreId")
-        mMovieModel.getMoviesByGenre(
-            genreId = genreId.toString(),
-            onSuccess = {
-
-                Log.d("TAG", "getMoviesByGenre: MovieVO:$it")
-                mMoviesByGenreViewPod.setData(it)
-            },
-
-            onFailure = {
-                showError(it)
-            })
-    }
-
-    private fun showError(it: String) {
-        Snackbar.make(window.decorView, it, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setUpViewPods() {
@@ -156,12 +85,7 @@ class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseView
     private fun setUpListeners() {
         tabLayoutGenre.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-
-                //Snackbar.make(window.decorView, tab?.text ?: "", Snackbar.LENGTH_SHORT).show()
-
-                mGenres?.getOrNull(tab?.position ?: 0)?.id?.let {
-                    getMoviesByGenre(it)
-                }
+                mViewModel.getMovieByGenre(tab?.position ?: 0)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -221,12 +145,10 @@ class MainActivity : AppCompatActivity(), BannerViewHolderDelegate, ShowCaseView
     }
 
     override fun onTapMovieFromShowCase(movieId: Int) {
-        Log.d("MainActivity", "onTapMovieFromShowCase: $movieId")
         startActivity(MovieDetailActivity.newIntent(this, movieId = movieId))
     }
 
     override fun onTapMovie(movieId: Int) {
-        Log.d("MainActivity", "onTapMovie: $movieId")
         startActivity(MovieDetailActivity.newIntent(this, movieId = movieId))
     }
 }
